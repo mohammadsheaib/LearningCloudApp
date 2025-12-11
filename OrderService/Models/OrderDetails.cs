@@ -10,6 +10,8 @@ public class OrderDetails
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
 
+    public string ProductId { get; set; }
+    public string ProductName { get; set; }
     public int Quantity { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
