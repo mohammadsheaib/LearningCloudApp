@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace OrderService.Models;
 
-public class Order
+public class OrderDetails
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
@@ -16,8 +16,3 @@ public class Order
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
-public class CreateOrderDto
-{
-    public string ProductId { get; set; }
-    public int Quantity { get; set; }
-}
