@@ -1,10 +1,12 @@
-name: CI-CD to Azure Container Registry
+name: CI/CD to Azure Container Registry
 
+# Trigger only on pushes to master branch, ignoring workflow changes
 on:
   push:
     branches:
       - master
-  pull_request:
+    paths-ignore:
+      - '.github/workflows/**'
 
 jobs:
   build-and-push:
@@ -14,10 +16,12 @@ jobs:
         service: [OrderService, ProductService]
 
     steps:
+    # Step 1: Checkout code
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Log in to Azure
+    # Step 2: Log in to Azure
+    - name: Azure Login
       uses: azure/login@v1
       with:
         creds: |
@@ -28,9 +32,12 @@ jobs:
             "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
           }
 
-    - name: Build and push Docker image to ACR
+    # Step 3: Build and push Docker image to ACR
+    - name: Build and push image
       run: |
+        IMAGE_NAME="${{ secrets.ACR_NAME }}.azurecr.io/${{ matrix.service }}"
+        IMAGE_NAME_LOWER=$(echo $IMAGE_NAME | tr '[:upper:]' '[:lower:]')
         az acr build \
           --registry ${{ secrets.ACR_NAME }} \
-          --image ${{ matrix.service }}:latest \
+          --image $IMAGE_NAME_LOWER:latest \
           ./${{ matrix.service }}
